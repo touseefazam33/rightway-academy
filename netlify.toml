@@ -1,0 +1,14 @@
+# Netlify configuration for Rightway Academy
+# Place this file at the ROOT of your GitHub repository
+
+[build]
+  # No build command needed for plain HTML
+  publish = "."
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200
+
+[build.environment]
+  NODE_VERSION = "18"
