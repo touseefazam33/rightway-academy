@@ -1,0 +1,173 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images"
+public_folder: "/images"
+
+site_url: https://www.rightwayacademy.pk
+display_url: https://www.rightwayacademy.pk
+logo_url: https://www.rightwayacademy.pk/favicon.ico
+
+collections:
+
+  # ── SITE SETTINGS ─────────────────────────────────────────
+  - name: "settings"
+    label: "⚙️ Site settings"
+    files:
+
+      - label: "Contact & links"
+        name: "contact"
+        file: "_data/contact.json"
+        fields:
+          - { label: "WhatsApp number (with country code)", name: "whatsapp", widget: "string", default: "923034263823", hint: "Example: 923034263823  (no + or spaces)" }
+          - { label: "Primary email", name: "email1", widget: "string", default: "touseefazam33@gmail.com" }
+          - { label: "Academy email", name: "email2", widget: "string", default: "info@rightwayacademy.com" }
+          - { label: "PTB Books URL", name: "ptb_url", widget: "string", default: "https://ptbb.punjab.gov.pk/" }
+          - { label: "BISE Lahore URL", name: "bise_url", widget: "string", default: "https://www.biselahore.com/" }
+          - { label: "Noon Academy URL", name: "noon_url", widget: "string", default: "https://www.noonacademy.com/pk/mdcat" }
+          - { label: "Pak Army URL", name: "army_url", widget: "string", default: "https://joinpakarmy.gov.pk/apply" }
+          - { label: "Quran partner URL", name: "quran_url", widget: "string", default: "https://edarulquran.com/contact-us/" }
+
+      - label: "Homepage stats"
+        name: "stats"
+        file: "_data/stats.json"
+        fields:
+          - { label: "Students enrolled", name: "students", widget: "string", default: "5,000+" }
+          - { label: "Pass rate", name: "pass_rate", widget: "string", default: "95%" }
+          - { label: "Faculty count", name: "faculty", widget: "string", default: "12+" }
+          - { label: "Courses offered", name: "courses", widget: "string", default: "10+" }
+
+      - label: "Announcements"
+        name: "announcements"
+        file: "_data/announcements.json"
+        fields:
+          - label: "Ticker text (scrolling bar at top)"
+            name: "ticker"
+            widget: "string"
+            default: "New ALP Books Class 9 & 10 now FREE at ptbb.punjab.gov.pk | BISE Lahore Result 2025 — Check at biselahore.com | MDCAT 2025 registration opening — pmc.gov.pk | WhatsApp: 0303-4263823 for free guidance"
+          - label: "Show BISE results alert bar?"
+            name: "show_bise_alert"
+            widget: "boolean"
+            default: true
+          - label: "BISE alert bar text"
+            name: "bise_alert_text"
+            widget: "string"
+            default: "LIVE: BISE Lahore Result 2025 announced — Check your result at biselahore.com"
+
+      - label: "SEO / Google"
+        name: "seo"
+        file: "_data/seo.json"
+        fields:
+          - { label: "Page title (shown in Google)", name: "title", widget: "string" }
+          - { label: "Meta description (shown in Google results)", name: "description", widget: "text" }
+          - { label: "Google Analytics ID", name: "ga_id", widget: "string", default: "G-XXXXXXXXXX" }
+          - { label: "Google AdSense Publisher ID", name: "adsense_id", widget: "string", default: "ca-pub-XXXXXXXXXXXXXXXX" }
+          - { label: "Google Sheets Script URL", name: "sheets_url", widget: "string", default: "https://script.google.com/macros/s/YOUR_ID/exec" }
+
+  # ── BLOG POSTS ────────────────────────────────────────────
+  - name: "blog"
+    label: "📝 Blog posts"
+    folder: "_posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Publish date", name: "date", widget: "datetime" }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options: ["MDCAT", "ECAT", "ALP Books", "AFNS", "AMC", "Jobs", "Quran", "Digital Literacy", "Study Tips", "Results", "General"]
+      - label: "Status"
+        name: "status"
+        widget: "select"
+        options: ["published", "draft"]
+        default: "published"
+      - { label: "Featured image (optional)", name: "thumbnail", widget: "image", required: false }
+      - { label: "Meta description (for Google)", name: "description", widget: "text", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  # ── FAQ ───────────────────────────────────────────────────
+  - name: "faq"
+    label: "❓ FAQ"
+    folder: "_faq"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Question", name: "title", widget: "string" }
+      - { label: "Answer", name: "body", widget: "markdown" }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options: ["General", "Books", "MDCAT", "ECAT", "AFNS", "AMC", "Results", "Jobs", "Quran", "Digital"]
+      - { label: "Display order (lower = first)", name: "order", widget: "number", default: 10 }
+
+  # ── COURSES ───────────────────────────────────────────────
+  - name: "courses"
+    label: "📚 Courses"
+    files:
+
+      - label: "Class 9"
+        name: "class9"
+        file: "_data/course_class9.json"
+        fields:
+          - { label: "Course title", name: "title", widget: "string", default: "Class 9 — ALP 2025" }
+          - { label: "Short description", name: "description", widget: "text" }
+          - { label: "Subjects (comma separated)", name: "subjects", widget: "string", default: "Biology, Chemistry, Physics, Mathematics, Computer, English, Urdu" }
+          - { label: "Show enrollment form?", name: "show_enroll", widget: "boolean", default: true }
+
+      - label: "Class 10"
+        name: "class10"
+        file: "_data/course_class10.json"
+        fields:
+          - { label: "Course title", name: "title", widget: "string", default: "Class 10 — Board Exams" }
+          - { label: "Short description", name: "description", widget: "text" }
+          - { label: "Subjects (comma separated)", name: "subjects", widget: "string", default: "Biology, Chemistry, Physics, Mathematics, Computer, English, Urdu" }
+          - { label: "Show enrollment form?", name: "show_enroll", widget: "boolean", default: true }
+
+      - label: "Class 11"
+        name: "class11"
+        file: "_data/course_class11.json"
+        fields:
+          - { label: "Course title", name: "title", widget: "string", default: "Class 11 — FSc Part 1" }
+          - { label: "Short description", name: "description", widget: "text" }
+          - { label: "Subjects (comma separated)", name: "subjects", widget: "string", default: "Biology, Chemistry, Physics, Mathematics, Computer, English" }
+          - { label: "Show enrollment form?", name: "show_enroll", widget: "boolean", default: true }
+
+      - label: "Class 12"
+        name: "class12"
+        file: "_data/course_class12.json"
+        fields:
+          - { label: "Course title", name: "title", widget: "string", default: "Class 12 — FSc Part 2" }
+          - { label: "Short description", name: "description", widget: "text" }
+          - { label: "Subjects (comma separated)", name: "subjects", widget: "string", default: "Biology, Chemistry, Physics, Mathematics, Computer, English" }
+          - { label: "Show enrollment form?", name: "show_enroll", widget: "boolean", default: true }
+
+      - label: "MDCAT"
+        name: "mdcat"
+        file: "_data/course_mdcat.json"
+        fields:
+          - { label: "Course title", name: "title", widget: "string", default: "MDCAT 2025 Preparation" }
+          - { label: "Short description", name: "description", widget: "text" }
+          - { label: "Show enrollment form?", name: "show_enroll", widget: "boolean", default: true }
+
+      - label: "ECAT"
+        name: "ecat"
+        file: "_data/course_ecat.json"
+        fields:
+          - { label: "Course title", name: "title", widget: "string", default: "ECAT 2025 Preparation" }
+          - { label: "Short description", name: "description", widget: "text" }
+          - { label: "Show enrollment form?", name: "show_enroll", widget: "boolean", default: true }
+
+  # ── FACULTY ───────────────────────────────────────────────
+  - name: "faculty"
+    label: "👨‍🏫 Faculty"
+    folder: "_faculty"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Name", name: "title", widget: "string" }
+      - { label: "Subject / Role", name: "subject", widget: "string" }
+      - { label: "Qualification", name: "qualification", widget: "string" }
+      - { label: "Photo (optional)", name: "photo", widget: "image", required: false }
+      - { label: "Display order", name: "order", widget: "number", default: 10 }
