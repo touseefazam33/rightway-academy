@@ -1,3 +1,13 @@
 {
-  "posts": []
+  "posts": [
+    {
+      "id": 1783689450998,
+      "title": "The Latest MDCAT Exam Structure & Marks Distribution",
+      "cat": "MDCAT",
+      "status": "Published",
+      "description": "Ace the latest 180-MCQ MDCAT exam with our complete preparation guide. Discover subject-wise marks distribution, smart study strategies, and proven passing secrets.",
+      "date": "10/07/2026",
+      "slug": "the-latest-mdcat-exam-structure-marks-distribution"
+    }
+  ]
 }
