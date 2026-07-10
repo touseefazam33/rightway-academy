@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Rightway Academy — CMS Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0A2463;--navy2:#143285;--gold:#E8B923;
+  --green:#10B981;--red:#EF4444;--orange:#F59E0B;
+  --bg:#F0F2F8;--sidebar:#0A2463;--white:#fff;
+  --border:#E5E7EB;--text:#1F2937;--muted:#6B7280;
+  --light:#F4F7FF;--light2:#EEF2FF;--radius:10px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),var(--navy2));display:flex;align-items:center;justify-content:center;z-index:9999;}
+.login-box{background:#fff;border-radius:20px;padding:2.5rem;width:380px;text-align:center;}
+.login-logo{width:56px;height:56px;background:var(--navy);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--gold);margin:0 auto 1rem;}
+.login-box h1{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.login-box p{font-size:13px;color:var(--muted);margin-bottom:1.2rem;}
+.login-box input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;margin-bottom:10px;outline:none;transition:border .2s;font-family:inherit;}
+.login-box input:focus{border-color:var(--navy);}
+.login-btn{width:100%;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;}
+.login-btn:hover{background:var(--navy2);}
+.login-error{color:var(--red);font-size:13px;margin-top:8px;display:none;}
+.login-hint{font-size:12px;color:var(--muted);margin-top:10px;}
+.github-setup{background:var(--light2);border-radius:10px;padding:1rem;margin-top:1rem;text-align:left;}
+.github-setup h4{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.github-setup input{margin-bottom:6px;}
+.github-setup .hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5;}
+/* SIDEBAR */
+.sidebar{width:240px;background:var(--sidebar);height:100vh;position:sticky;top:0;display:flex;flex-direction:column;flex-shrink:0;}
+.sb-brand{padding:1.2rem;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-logo{display:flex;align-items:center;gap:10px;}
+.sb-logo-icon{width:36px;height:36px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--navy);}
+.sb-logo-text{color:#fff;font-size:14px;font-weight:600;}
+.sb-logo-sub{font-size:10px;color:rgba(255,255,255,.4);}
+.sb-nav{flex:1;padding:.8rem 0;overflow-y:auto;}
+.sb-section{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.2px;padding:.6rem 1.2rem .3rem;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 1.2rem;cursor:pointer;color:rgba(255,255,255,.65);font-size:13.5px;transition:all .15s;border-left:3px solid transparent;}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+.sb-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:var(--gold);}
+.sb-item i{width:18px;font-size:16px;}
+.sb-badge{margin-left:auto;background:var(--gold);color:var(--navy);font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;}
+.sb-footer{padding:1rem 1.2rem;border-top:1px solid rgba(255,255,255,.08);}
+.sb-user{display:flex;align-items:center;gap:10px;}
+.sb-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--navy);flex-shrink:0;}
+.sb-user-name{color:#fff;font-size:13px;font-weight:500;}
+.sb-user-role{color:rgba(255,255,255,.4);font-size:11px;}
+.logout-btn{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:15px;}
+.logout-btn:hover{color:var(--red);}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:100;}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar-title{font-size:17px;font-weight:600;color:var(--navy);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.live-badge{display:flex;align-items:center;gap:6px;background:#ECFDF5;color:#065F46;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;}
+.live-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.4);}}
+.topbar-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;color:var(--text);text-decoration:none;}
+.topbar-btn:hover{background:var(--light2);border-color:#c7d0ea;}
+.topbar-btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+.topbar-btn.primary:hover{background:var(--navy2);}
+.content{flex:1;padding:1.5rem;overflow-y:auto;}
+.page{display:none;} .page.active{display:block;}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:1.5rem;}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.2rem;}
+.stat-label{font-size:12px;color:var(--muted);margin-bottom:6px;}
+.stat-value{font-size:26px;font-weight:700;color:var(--navy);}
+.stat-icon{float:right;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.stat-icon.blue{background:var(--light2);color:var(--navy);}
+.stat-icon.green{background:#ECFDF5;color:var(--green);}
+.stat-icon.gold{background:#FFFBEB;color:var(--gold);}
+.stat-icon.red{background:#FEF2F2;color:var(--red);}
+/* TABLES */
+.table-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;}
+.tbl th{background:var(--light);padding:10px 14px;text-align:left;font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--light);}
+.tbl-btn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:12px;cursor:pointer;transition:all .15s;}
+.tbl-btn:hover{background:var(--light2);border-color:var(--navy);color:var(--navy);}
+.tbl-btn.danger{border-color:#fecaca;color:var(--red);}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:600;}
+.badge-green{background:#ECFDF5;color:#065F46;}
+.badge-blue{background:var(--light2);color:var(--navy);}
+.badge-gold{background:#FFFBEB;color:#854F0B;}
+.badge-red{background:#FEF2F2;color:#991B1B;}
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+.content-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.cc-hdr{padding:.9rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.cc-hdr-title{font-size:14px;font-weight:600;color:var(--navy);}
+.cc-body{padding:1rem;}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.sec-hdr h2{font-size:15px;font-weight:600;color:var(--navy);}
+/* FORMS */
+.form-group{margin-bottom:1rem;}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:5px;}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13.5px;outline:none;transition:border .2s;font-family:inherit;background:#fff;}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--navy);}
+.form-group textarea{height:120px;resize:vertical;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-actions{display:flex;gap:10px;margin-top:1.2rem;}
+.btn-save{padding:10px 22px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.btn-save:hover{background:var(--navy2);}
+.btn-save:disabled{opacity:.6;cursor:not-allowed;}
+.btn-cancel{padding:10px 20px;background:#fff;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius);font-size:14px;cursor:pointer;}
+/* QUICK EDIT */
+.quick-panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.3rem;margin-bottom:1rem;}
+.quick-panel h3{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:1rem;}
+.quick-field{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.quick-field:last-child{border-bottom:none;}
+.quick-field label{font-size:13px;font-weight:500;color:var(--muted);width:160px;flex-shrink:0;}
+.quick-field input{flex:1;padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;font-family:inherit;}
+.quick-field input:focus{border-color:var(--navy);}
+.save-inline{padding:6px 14px;background:var(--navy);color:#fff;border:none;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.save-inline:disabled{opacity:.6;cursor:not-allowed;}
+/* EDITOR */
+.editor-toolbar{display:flex;gap:6px;flex-wrap:wrap;background:var(--light);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius) var(--radius) 0 0;padding:8px 10px;}
+.editor-btn{padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:#fff;font-size:12.5px;cursor:pointer;font-weight:600;}
+.editor-btn:hover{background:var(--light2);border-color:var(--navy);}
+.editor-area{border:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);min-height:200px;padding:12px;outline:none;font-size:14px;line-height:1.7;background:#fff;}
+.editor-area:focus{border-color:var(--navy);}
+/* BLOG */
+.blog-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);}
+.blog-row:last-child{border-bottom:none;}
+.blog-num{width:36px;height:36px;background:var(--light2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--navy);flex-shrink:0;}
+.blog-title{font-size:14px;font-weight:500;color:var(--navy);flex:1;}
+.blog-meta{font-size:12px;color:var(--muted);}
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--light);border-radius:10px;padding:4px;margin-bottom:1.2rem;}
+.tab{padding:7px 16px;border-radius:8px;font-size:13.5px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;}
+.tab.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+/* SETTINGS */
+.settings-section{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.2rem;}
+.settings-section h3{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-label{font-size:13.5px;color:var(--text);}
+.toggle-sub{font-size:12px;color:var(--muted);}
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:24px;cursor:pointer;transition:background .2s;}
+.toggle input:checked+.toggle-slider{background:var(--green);}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);}
+/* DEPLOY */
+.deploy-card{background:linear-gradient(135deg,#0A2463,#143285);border-radius:14px;padding:1.4rem;color:#fff;margin-bottom:1.2rem;}
+.deploy-card h3{color:#fff;font-size:15px;font-weight:600;margin-bottom:6px;}
+.deploy-card p{color:rgba(255,255,255,.72);font-size:13px;line-height:1.6;margin-bottom:1rem;}
+.deploy-url{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 12px;font-size:13px;font-family:monospace;color:var(--gold);}
+.deploy-btn{margin-top:12px;padding:9px 18px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;}
+/* SECURITY LOG */
+.log-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.log-item:last-child{border-bottom:none;}
+.log-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.log-icon.success{background:#ECFDF5;color:var(--green);}
+.log-icon.warn{background:#FEF3C7;color:var(--orange);}
+.log-icon.fail{background:#FEF2F2;color:var(--red);}
+.log-time{font-size:11.5px;color:var(--muted);}
+/* ANNOUNCEMENT PREVIEW */
+.announcement-preview{background:linear-gradient(90deg,#064e3b,#065F46);padding:10px 16px;border-radius:8px;color:#6EE7B7;font-size:13px;margin-top:10px;}
+/* TOAST */
+.toast{position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;z-index:9998;display:none;align-items:center;gap:8px;max-width:320px;}
+.toast.success{background:var(--green);color:#fff;}
+.toast.error{background:var(--red);color:#fff;}
+.toast.info{background:var(--navy);color:#fff;}
+/* GITHUB STATUS */
+.gh-status{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding:.85rem 1rem;border-radius:9px;border:1px solid var(--border);}
+.gh-status.connected{background:#ECFDF5;border-color:#86EFAC;}
+.gh-status.pending{background:#FFFBEB;border-color:#FDE68A;}
+.gh-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.connected .gh-dot{background:var(--green);}
+.pending .gh-dot{background:var(--orange);}
+/* SAVING OVERLAY */
+.saving-overlay{position:fixed;inset:0;background:rgba(10,36,99,.5);display:none;align-items:center;justify-content:center;z-index:9990;}
+.saving-box{background:#fff;border-radius:16px;padding:2rem;text-align:center;min-width:260px;}
+.saving-spinner{width:40px;height:40px;border:3px solid var(--light2);border-top-color:var(--navy);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div class="saving-overlay" id="savingOverlay">
+  <div class="saving-box">
+    <div class="saving-spinner"></div>
+    <div id="savingMsg" style="font-size:14px;font-weight:600;color:var(--navy)">Saving to GitHub...</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:6px">Website will update in ~30 seconds</div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">RW</div>
+    <h1>Rightway Academy CMS</h1>
+    <p>Admin dashboard — changes go live automatically</p>
+    <input type="text" id="loginUser" placeholder="Username">
+    <input type="password" id="loginPass" placeholder="Password">
+    <button class="login-btn" onclick="doLogin()">Sign in</button>
+    <div class="login-error" id="loginError">Incorrect username or password.</div>
+
+    <div class="github-setup">
+      <h4>🔗 GitHub API Setup (first time only)</h4>
+      <input type="text" id="setupRepo" placeholder="GitHub username/repo e.g. touseefazam33/rightway-academy">
+      <input type="password" id="setupToken" placeholder="GitHub Personal Access Token">
+      <button onclick="saveGitHubSetup()" style="width:100%;padding:8px;background:var(--navy);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">Save GitHub Connection</button>
+      <div class="hint">Token needs: repo → contents (read & write). Get it at github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens</div>
+    </div>
+    <div class="login-hint">Default: admin / rightway2025</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">RW</div>
+      <div><div class="sb-logo-text">Rightway Academy</div><div class="sb-logo-sub">CMS Dashboard</div></div>
+    </div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-section">Main</div>
+    <div class="sb-item active" onclick="showPage('dashboard',this)"><i class="fas fa-home"></i>Dashboard</div>
+    <div class="sb-item" onclick="showPage('quickedit',this)"><i class="fas fa-bolt"></i>Quick edit</div>
+    <div class="sb-section">Content</div>
+    <div class="sb-item" onclick="showPage('blog',this)"><i class="fas fa-pen-to-square"></i>Blog posts<span class="sb-badge" id="blogBadge">0</span></div>
+    <div class="sb-item" onclick="showPage('announcements',this)"><i class="fas fa-bullhorn"></i>Announcements</div>
+    <div class="sb-item" onclick="showPage('faq',this)"><i class="fas fa-circle-question"></i>FAQ</div>
+    <div class="sb-item" onclick="showPage('partners',this)"><i class="fas fa-link"></i>Partners & Links</div>
+    <div class="sb-section">Data</div>
+    <div class="sb-item" onclick="showPage('enrollments',this)"><i class="fas fa-users"></i>Enrollments<span class="sb-badge" id="enrollBadge">0</span></div>
+    <div class="sb-item" onclick="showPage('mcqresults',this)"><i class="fas fa-chart-bar"></i>MCQ results</div>
+    <div class="sb-item" onclick="showPage('contacts',this)"><i class="fas fa-envelope"></i>Messages</div>
+    <div class="sb-section">Publish</div>
+    <div class="sb-item" onclick="showPage('deploy',this)"><i class="fas fa-cloud-upload-alt"></i>Deploy site</div>
+    <div class="sb-item" onclick="showPage('seo',this)"><i class="fas fa-search"></i>SEO settings</div>
+    <div class="sb-item" onclick="showPage('settings',this)"><i class="fas fa-gear"></i>Settings</div>
+    <div class="sb-item" onclick="showPage('security',this)"><i class="fas fa-shield-alt"></i>Security log</div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">MT</div>
+      <div><div class="sb-user-name">Muhammad Touseef</div><div class="sb-user-role">Administrator</div></div>
+      <button class="logout-btn" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left"><span class="topbar-title" id="topbarTitle">Dashboard</span></div>
+    <div class="topbar-right">
+      <div class="live-badge"><div class="live-dot"></div>rightwayacademy.pk — Live</div>
+      <a href="https://www.rightwayacademy.pk" target="_blank" class="topbar-btn"><i class="fas fa-external-link-alt"></i>View site</a>
+      <span id="ghStatusBadge" class="topbar-btn" style="background:#FFFBEB;border-color:#FDE68A;color:#854F0B"><i class="fas fa-circle-dot"></i>GitHub: Not set</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-users"></i></div><div class="stat-label">Enrollments</div><div class="stat-value" id="statEnroll">0</div></div>
+        <div class="stat-card"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div><div class="stat-label">MCQ tests</div><div class="stat-value" id="statMCQ">0</div></div>
+        <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-pen"></i></div><div class="stat-label">Blog posts</div><div class="stat-value" id="statBlog">0</div></div>
+        <div class="stat-card"><div class="stat-icon red"><i class="fas fa-envelope"></i></div><div class="stat-label">Messages</div><div class="stat-value" id="statMsg">0</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.2rem;">
+        <div class="content-card">
+          <div class="cc-hdr"><span class="cc-hdr-title">GitHub connection status</span></div>
+          <div class="cc-body" id="dashGHStatus">
+            <div style="color:var(--muted);font-size:13px">Not configured. Set up in the login screen or Settings.</div>
+          </div>
+        </div>
+        <div class="content-card">
+          <div class="cc-hdr"><span class="cc-hdr-title">Quick actions</span></div>
+          <div class="cc-body" style="display:flex;flex-direction:column;gap:8px;">
+            <button class="topbar-btn" style="justify-content:flex-start" onclick="showPage('announcements',null)"><i class="fas fa-bullhorn"></i>Edit announcements</button>
+            <button class="topbar-btn" style="justify-content:flex-start" onclick="showPage('quickedit',null)"><i class="fas fa-bolt"></i>Quick edit text & links</button>
+            <button class="topbar-btn" style="justify-content:flex-start" onclick="showPage('blog',null);openNewPost()"><i class="fas fa-plus"></i>Write new blog post</button>
+            <button class="topbar-btn" style="justify-content:flex-start" onclick="showPage('faq',null)"><i class="fas fa-circle-question"></i>Edit FAQ</button>
+            <button class="topbar-btn" style="justify-content:flex-start" onclick="showPage('seo',null)"><i class="fas fa-search"></i>Update SEO</button>
+            <a href="https://www.rightwayacademy.pk" target="_blank" class="topbar-btn" style="justify-content:flex-start"><i class="fas fa-external-link-alt"></i>Open live website</a>
+          </div>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="cc-hdr"><span class="cc-hdr-title">How it works</span></div>
+        <div class="cc-body">
+          <div style="display:flex;gap:0;align-items:center;flex-wrap:wrap;gap:8px;font-size:13px;">
+            <div style="background:var(--light2);border-radius:8px;padding:8px 14px;text-align:center"><strong>You edit here</strong><br><span style="color:var(--muted)">CMS Dashboard</span></div>
+            <span style="color:var(--muted);font-size:18px">→</span>
+            <div style="background:var(--light2);border-radius:8px;padding:8px 14px;text-align:center"><strong>Saves to GitHub</strong><br><span style="color:var(--muted)">_data/*.json</span></div>
+            <span style="color:var(--muted);font-size:18px">→</span>
+            <div style="background:var(--light2);border-radius:8px;padding:8px 14px;text-align:center"><strong>Netlify deploys</strong><br><span style="color:var(--muted)">~30 seconds</span></div>
+            <span style="color:var(--muted);font-size:18px">→</span>
+            <div style="background:#ECFDF5;border-radius:8px;padding:8px 14px;text-align:center"><strong style="color:#065F46">Website updates</strong><br><span style="color:#065F46">Students see it live</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK EDIT -->
+    <div class="page" id="page-quickedit">
+      <div class="quick-panel">
+        <h3><i class="fas fa-phone" style="color:var(--navy);margin-right:6px"></i>Contact information</h3>
+        <div class="quick-field"><label>WhatsApp number</label><input id="qPhone" value="923034263823"><button class="save-inline" onclick="saveContact()"><i class="fas fa-cloud-upload-alt"></i>Save & Deploy</button></div>
+        <div class="quick-field"><label>Primary email</label><input id="qEmail" value="touseefazam33@gmail.com"></div>
+        <div class="quick-field"><label>Academy email</label><input id="qEmail2" value="info@rightwayacademy.com"></div>
+        <button class="btn-save" onclick="saveContact()" style="margin-top:.5rem"><i class="fas fa-cloud-upload-alt"></i>Save all contact info → Deploy</button>
+      </div>
+      <div class="quick-panel">
+        <h3><i class="fas fa-globe" style="color:var(--navy);margin-right:6px"></i>Resource links</h3>
+        <div class="quick-field"><label>PTB Books URL</label><input id="qPTB" value="https://ptbb.punjab.gov.pk/"></div>
+        <div class="quick-field"><label>BISE Lahore URL</label><input id="qBISE" value="https://www.biselahore.com/"></div>
+        <div class="quick-field"><label>Noon Academy URL</label><input id="qNoon" value="https://www.noonacademy.com/pk/mdcat"></div>
+        <div class="quick-field"><label>Pak Army URL</label><input id="qArmy" value="https://joinpakarmy.gov.pk/apply"></div>
+        <div class="quick-field"><label>Quran partner URL</label><input id="qQuran" value="https://edarulquran.com/contact-us/"></div>
+        <button class="btn-save" onclick="saveContact()" style="margin-top:.5rem"><i class="fas fa-cloud-upload-alt"></i>Save links → Deploy</button>
+      </div>
+      <div class="quick-panel">
+        <h3><i class="fas fa-star" style="color:var(--navy);margin-right:6px"></i>Homepage stats bar</h3>
+        <div class="quick-field"><label>Students enrolled</label><input id="qStat1" value="5,000+"></div>
+        <div class="quick-field"><label>Pass rate</label><input id="qStat2" value="95%"></div>
+        <div class="quick-field"><label>Faculty count</label><input id="qStat3" value="12+"></div>
+        <div class="quick-field"><label>Courses offered</label><input id="qStat4" value="10+"></div>
+        <button class="btn-save" onclick="saveStats()" style="margin-top:.5rem"><i class="fas fa-cloud-upload-alt"></i>Save stats → Deploy</button>
+      </div>
+      <div class="quick-panel">
+        <h3><i class="fas fa-code" style="color:var(--navy);margin-right:6px"></i>API keys (Google)</h3>
+        <div class="quick-field"><label>AdSense Publisher ID</label><input id="qAdsense" placeholder="ca-pub-XXXXXXXXXXXXXXXX"></div>
+        <div class="quick-field"><label>Analytics ID</label><input id="qGA" placeholder="G-XXXXXXXXXX"></div>
+        <div class="quick-field"><label>Sheets Script URL</label><input id="qSheets" placeholder="https://script.google.com/macros/s/.../exec"></div>
+        <button class="btn-save" onclick="saveSEO()" style="margin-top:.5rem"><i class="fas fa-cloud-upload-alt"></i>Save API keys → Deploy</button>
+      </div>
+    </div>
+
+    <!-- BLOG -->
+    <div class="page" id="page-blog">
+      <div class="tabs" id="blogTabs">
+        <div class="tab active" onclick="switchBlogTab('list',this)">All posts</div>
+        <div class="tab" id="newPostTab" onclick="switchBlogTab('new',this)">New post</div>
+      </div>
+      <div id="blogList">
+        <div class="table-wrap">
+          <div style="padding:.9rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:13px;font-weight:600;color:var(--navy)">Blog posts</span>
+            <button class="topbar-btn primary" onclick="openNewPost()"><i class="fas fa-plus"></i>New post</button>
+          </div>
+          <div style="padding:.8rem 1rem" id="blogPosts"></div>
+        </div>
+      </div>
+      <div id="blogEditor" style="display:none">
+        <div class="content-card">
+          <div class="cc-hdr"><span class="cc-hdr-title" id="editorTitle">New blog post</span></div>
+          <div class="cc-body">
+            <div class="form-group"><label>Post title</label><input id="postTitle" placeholder="e.g. How to score 185+ in MDCAT Biology"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Category</label><select id="postCat"><option>MDCAT</option><option>ECAT</option><option>ALP Books</option><option>AFNS</option><option>AMC</option><option>Jobs</option><option>Quran</option><option>Digital</option><option>Study Tips</option></select></div>
+              <div class="form-group"><label>Status</label><select id="postStatus"><option>Published</option><option>Draft</option></select></div>
+            </div>
+            <div class="form-group">
+              <label>Content</label>
+              <div class="editor-toolbar">
+                <button class="editor-btn" onclick="fmt('bold')"><b>B</b></button>
+                <button class="editor-btn" onclick="fmt('italic')"><i>I</i></button>
+                <button class="editor-btn" onclick="fmt('underline')"><u>U</u></button>
+                <button class="editor-btn" onclick="fmtH()">H2</button>
+                <button class="editor-btn" onclick="fmtList()">• List</button>
+                <button class="editor-btn" onclick="fmtLink()">Link</button>
+              </div>
+              <div class="editor-area" id="postContent" contenteditable="true"></div>
+            </div>
+            <div class="form-group"><label>Meta description (SEO, 150 chars)</label><input id="postMeta" placeholder="Brief description for Google search results"></div>
+            <div class="form-actions">
+              <button class="btn-save" onclick="savePost()"><i class="fas fa-cloud-upload-alt"></i>Save & Deploy</button>
+              <button class="btn-cancel" onclick="switchBlogTab('list',document.querySelector('.tab'))">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="page" id="page-announcements">
+      <div class="content-card" style="margin-bottom:1rem">
+        <div class="cc-hdr"><span class="cc-hdr-title">Scrolling ticker text</span></div>
+        <div class="cc-body">
+          <div class="form-group"><label>Announcement text (scrolls at top of website)</label><textarea id="annoText" style="height:90px">New ALP Books Class 9 &amp; 10 now FREE at ptbb.punjab.gov.pk | BISE Lahore Result 2025 — Check at biselahore.com | MDCAT 2025 registration opening — pmc.gov.pk | WhatsApp: 0303-4263823</textarea></div>
+          <div class="announcement-preview" id="annoPreview"></div>
+          <button class="btn-save" onclick="saveAnnouncement()" style="margin-top:1rem"><i class="fas fa-cloud-upload-alt"></i>Save & Deploy to website</button>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="cc-hdr"><span class="cc-hdr-title">BISE Lahore results alert bar</span></div>
+        <div class="cc-body">
+          <div class="toggle-row"><div><div class="toggle-label">Show results alert bar on homepage</div></div><label class="toggle"><input type="checkbox" id="biseAlertToggle" checked><span class="toggle-slider"></span></label></div>
+          <div class="form-group" style="margin-top:1rem"><label>Alert bar text</label><input id="biseAlertText" value="LIVE: BISE Lahore Result 2025 announced — Check your result at biselahore.com"></div>
+          <button class="btn-save" onclick="saveAnnouncement()"><i class="fas fa-cloud-upload-alt"></i>Save & Deploy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="page" id="page-faq">
+      <div class="sec-hdr"><h2>FAQ management</h2><button class="topbar-btn primary" onclick="addFAQ()"><i class="fas fa-plus"></i>Add question</button></div>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>#</th><th>Question</th><th>Category</th><th>Actions</th></tr></thead><tbody id="faqTable"></tbody></table></div>
+      <div id="faqEditor" style="display:none;margin-top:1rem">
+        <div class="content-card">
+          <div class="cc-hdr"><span class="cc-hdr-title">Edit FAQ</span></div>
+          <div class="cc-body">
+            <div class="form-group"><label>Question</label><input id="faqQ" placeholder="Enter the question"></div>
+            <div class="form-group"><label>Answer</label><textarea id="faqA" placeholder="Enter the answer"></textarea></div>
+            <div class="form-group"><label>Category</label><select id="faqCat"><option>General</option><option>Books</option><option>MDCAT</option><option>ECAT</option><option>AFNS</option><option>AMC</option><option>Results</option><option>Jobs</option><option>Quran</option></select></div>
+            <div class="form-actions"><button class="btn-save" onclick="saveFAQ()"><i class="fas fa-cloud-upload-alt"></i>Save & Deploy</button><button class="btn-cancel" onclick="document.getElementById('faqEditor').style.display='none'">Cancel</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTNERS -->
+    <div class="page" id="page-partners">
+      <div class="sec-hdr"><h2>Partners & backlinks</h2><button class="topbar-btn primary" onclick="addPartner()"><i class="fas fa-plus"></i>Add partner</button></div>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>#</th><th>Name</th><th>URL</th><th>Tag</th><th>Sponsored</th><th>Nofollow</th><th>Actions</th></tr></thead><tbody id="partnersTable"></tbody></table></div>
+      <div id="partnerEditor" style="display:none;margin-top:1rem">
+        <div class="content-card">
+          <div class="cc-hdr"><span class="cc-hdr-title">Edit partner / backlink</span></div>
+          <div class="cc-body">
+            <div class="form-row">
+              <div class="form-group"><label>Site name</label><input id="pName" placeholder="e.g. Noon Academy"></div>
+              <div class="form-group"><label>URL</label><input id="pUrl" placeholder="https://..."></div>
+            </div>
+            <div class="form-group"><label>Description</label><textarea id="pDesc" style="height:70px" placeholder="1-2 sentence description"></textarea></div>
+            <div class="form-row">
+              <div class="form-group"><label>Category tag</label><input id="pTag" placeholder="e.g. Free Lectures"></div>
+              <div class="form-group"><label>Sponsored? (mark as Ad)</label><select id="pSponsored"><option value="false">No</option><option value="true">Yes — Sponsored</option></select></div>
+            </div>
+            <div class="form-group"><label>Nofollow link? (for paid backlinks — required by Google)</label><select id="pNofollow"><option value="true">Yes — nofollow (recommended for paid links)</option><option value="false">No — dofollow (for trusted partners only)</option></select></div>
+            <div class="form-actions"><button class="btn-save" onclick="savePartner()"><i class="fas fa-cloud-upload-alt"></i>Save & Deploy</button><button class="btn-cancel" onclick="document.getElementById('partnerEditor').style.display='none'">Cancel</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENROLLMENTS -->
+    <div class="page" id="page-enrollments">
+      <div class="sec-hdr"><h2>Student enrollments</h2>
+        <div style="display:flex;gap:8px">
+          <select id="enrollFilter" style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px"><option value="">All courses</option><option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option><option>MDCAT</option><option>ECAT</option><option>AFNS</option><option>AMC</option></select>
+          <button class="topbar-btn" onclick="exportCSV('enrollments')"><i class="fas fa-download"></i>Export CSV</button>
+        </div>
+      </div>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Course</th><th>City</th><th>Date</th><th>Reply</th></tr></thead><tbody id="enrollTable"></tbody></table></div>
+      <div style="margin-top:.8rem;font-size:13px;color:var(--muted);padding:.5rem" id="enrollCount">0 enrollments</div>
+    </div>
+
+    <!-- MCQ RESULTS -->
+    <div class="page" id="page-mcqresults">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-check"></i></div><div class="stat-label">Tests taken</div><div class="stat-value" id="mcqTotal">0</div></div>
+        <div class="stat-card"><div class="stat-icon green"><i class="fas fa-star"></i></div><div class="stat-label">Avg score</div><div class="stat-value" id="mcqAvg">0%</div></div>
+      </div>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>#</th><th>Student</th><th>Subject</th><th>Class</th><th>Score</th><th>%</th><th>Date</th></tr></thead><tbody id="mcqTable"></tbody></table></div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div class="page" id="page-contacts">
+      <div class="sec-hdr"><h2>Contact messages</h2><button class="topbar-btn" onclick="exportCSV('contacts')"><i class="fas fa-download"></i>Export CSV</button></div>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Subject</th><th>Message</th><th>Date</th><th>Reply</th></tr></thead><tbody id="contactTable"></tbody></table></div>
+    </div>
+
+    <!-- DEPLOY -->
+    <div class="page" id="page-deploy">
+      <div class="deploy-card">
+        <h3><i class="fas fa-cloud-upload-alt" style="margin-right:8px"></i>Your site is live</h3>
+        <p>Every Save button in this CMS writes directly to GitHub → Netlify auto-deploys → website updates in ~30 seconds. No manual steps needed.</p>
+        <div class="deploy-url">https://www.rightwayacademy.pk</div>
+        <button class="deploy-btn" onclick="triggerDeploy()"><i class="fas fa-cloud-upload-alt"></i>Force redeploy now</button>
+      </div>
+      <div class="content-card">
+        <div class="cc-hdr"><span class="cc-hdr-title">GitHub connection</span></div>
+        <div class="cc-body" id="deployGHStatus"></div>
+      </div>
+      <div class="content-card" style="margin-top:1rem">
+        <div class="cc-hdr"><span class="cc-hdr-title">Deploy history</span></div>
+        <div class="cc-body" id="deployHistory"><div style="color:var(--muted);font-size:13px">Save something to see deploy history here.</div></div>
+      </div>
+    </div>
+
+    <!-- SEO -->
+    <div class="page" id="page-seo">
+      <div class="content-card">
+        <div class="cc-hdr"><span class="cc-hdr-title">SEO & Google settings</span></div>
+        <div class="cc-body">
+          <div class="form-group"><label>Page title (shown in Google)</label><input id="seoTitle" value="Rightway Academy | Free Online Academy Pakistan | MDCAT ECAT Class 9-12 ALP Books"></div>
+          <div class="form-group"><label>Meta description</label><textarea id="seoDesc" style="height:80px">Rightway Academy by Muhammad Touseef — Pakistan's free LMS. MDCAT, ECAT, Class 9-12 ALP books, MCQ tests, Online Quran, Jobs PPSC FPSC. Lahore, Pakistan.</textarea></div>
+          <div class="form-group"><label>Google Analytics ID</label><input id="seoGA" placeholder="G-XXXXXXXXXX"></div>
+          <div class="form-group"><label>Google AdSense Publisher ID</label><input id="seoAdsense" placeholder="ca-pub-XXXXXXXXXXXXXXXX"></div>
+          <div class="form-group"><label>Google Sheets Script URL</label><input id="seoSheets" placeholder="https://script.google.com/macros/s/.../exec"><div style="font-size:12px;color:var(--muted);margin-top:4px">Paste your Apps Script deployment URL here — all enrollments and MCQ results go to your Google Sheet automatically</div></div>
+          <button class="btn-save" onclick="saveSEO()"><i class="fas fa-cloud-upload-alt"></i>Save SEO & Google → Deploy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="settings-section">
+        <h3>GitHub API connection</h3>
+        <div class="form-group"><label>GitHub repository (username/repo)</label><input id="setRepo" placeholder="touseefazam33/rightway-academy"></div>
+        <div class="form-group"><label>GitHub Personal Access Token</label><input type="password" id="setToken" placeholder="github_pat_..."><div style="font-size:12px;color:var(--muted);margin-top:4px">Get from github.com → Settings → Developer settings → Personal access tokens → Fine-grained → repo contents read+write</div></div>
+        <button class="btn-save" onclick="saveGitHubFromSettings()"><i class="fas fa-save"></i>Save GitHub connection</button>
+      </div>
+      <div class="settings-section">
+        <h3>Admin password</h3>
+        <div class="form-row">
+          <div class="form-group"><label>New password</label><input type="password" id="newPass" placeholder="New password"></div>
+          <div class="form-group"><label>Confirm</label><input type="password" id="confirmPass" placeholder="Confirm password"></div>
+        </div>
+        <button class="btn-save" onclick="changePassword()">Change password</button>
+      </div>
+      <div class="settings-section">
+        <h3>Security settings</h3>
+        <div class="toggle-row"><div><div class="toggle-label">Disable right-click on website</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">Block DevTools shortcuts (F12)</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+        <div class="toggle-row"><div><div class="toggle-label">HTTPS only</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+      </div>
+    </div>
+
+    <!-- SECURITY LOG -->
+    <div class="page" id="page-security">
+      <div class="settings-section">
+        <h3>Activity log</h3>
+        <div id="securityLog">
+          <div class="log-item"><div class="log-icon success"><i class="fas fa-sign-in-alt"></i></div><div><div style="font-size:13.5px;font-weight:500">CMS loaded</div><div class="log-time">Just now</div></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// GITHUB API ENGINE — writes _data/*.json directly to GitHub
+// Every save button calls this → GitHub → Netlify deploys → website updates
+// ═══════════════════════════════════════════════════════════
+
+let GH_REPO = localStorage.getItem('rw_gh_repo') || '';
+let GH_TOKEN = localStorage.getItem('rw_gh_token') || '';
+let ADMIN_PASS = localStorage.getItem('rw_admin_pass') || 'rightway2025';
+let SHEETS_URL = localStorage.getItem('rw_sheets_url') || '';
+
+// In-memory data stores
+let posts = JSON.parse(localStorage.getItem('rw_posts') || '[]');
+let faqs = JSON.parse(localStorage.getItem('rw_faqs') || JSON.stringify([
+  {q:'Is Rightway Academy completely free?',a:'Yes, 100% free. All books, past papers, MCQ tests, and course resources are free.',cat:'General'},
+  {q:'How do I get free Class 9 ALP books?',a:'Visit ptbb.punjab.gov.pk for official free ALP books. Rightway Academy provides direct links.',cat:'Books'},
+  {q:'Where can I check BISE Lahore result 2025?',a:'Check at biselahore.com with your roll number. Our Results page links there directly.',cat:'Results'},
+  {q:'How to prepare for MDCAT 2025 for free?',a:'Use Noon Academy MDCAT lectures, our MCQ tests, and PMC past papers at pmc.gov.pk.',cat:'MDCAT'},
+]));
+let partners = JSON.parse(localStorage.getItem('rw_partners') || '[]');
+let enrollments = JSON.parse(localStorage.getItem('rw_enrollments') || '[]');
+let mcqResults = JSON.parse(localStorage.getItem('rw_mcq') || '[]');
+let contacts = JSON.parse(localStorage.getItem('rw_contacts') || '[]');
+let editingFAQIdx = -1;
+let editingPartnerIdx = -1;
+let editingPostIdx = -1;
+let deployHistory = JSON.parse(localStorage.getItem('rw_deploys') || '[]');
+
+// ── GITHUB API ──────────────────────────────────────────────
+async function ghWriteFile(path, content, msg) {
+  if (!GH_REPO || !GH_TOKEN) {
+    showToast('GitHub not connected. Go to Settings first.', 'error');
+    return false;
+  }
+  showSaving(msg || 'Saving to GitHub...');
+  try {
+    // Get current file SHA (needed to update existing files)
+    let sha = null;
+    try {
+      const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
+        headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (r.ok) { const d = await r.json(); sha = d.sha; }
+    } catch(e) {}
+
+    // Write the file
+    const body = {
+      message: msg || `CMS: update ${path}`,
+      content: btoa(unescape(encodeURIComponent(content))),
+      ...(sha ? { sha } : {})
+    };
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GH_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    hideSaving();
+    if (res.ok) {
+      const commitMsg = msg || `Updated ${path}`;
+      addDeployEntry(commitMsg);
+      logActivity(commitMsg);
+      showToast('✅ Saved! Website updating in ~30 seconds...', 'success');
+      return true;
+    } else {
+      const err = await res.json();
+      showToast('GitHub error: ' + (err.message || res.status), 'error');
+      return false;
+    }
+  } catch(e) {
+    hideSaving();
+    showToast('Connection error: ' + e.message, 'error');
+    return false;
+  }
+}
+
+async function ghReadFile(path) {
+  if (!GH_REPO || !GH_TOKEN) return null;
+  try {
+    const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
+      headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
+  } catch(e) { return null; }
+}
+
+// ── SAVE FUNCTIONS — each writes to _data/*.json on GitHub ──
+
+async function saveContact() {
+  const data = {
+    whatsapp: document.getElementById('qPhone').value.replace(/\D/g,''),
+    email1: document.getElementById('qEmail').value,
+    email2: document.getElementById('qEmail2').value,
+    ptb_url: document.getElementById('qPTB').value,
+    bise_url: document.getElementById('qBISE').value,
+    noon_url: document.getElementById('qNoon').value,
+    army_url: document.getElementById('qArmy').value,
+    quran_url: document.getElementById('qQuran').value,
+  };
+  const ok = await ghWriteFile('_data/contact.json', JSON.stringify(data, null, 2), 'CMS: update contact info & links');
+  if (ok) localStorage.setItem('rw_contact_cache', JSON.stringify(data));
+}
+
+async function saveStats() {
+  const data = {
+    students: document.getElementById('qStat1').value,
+    pass_rate: document.getElementById('qStat2').value,
+    faculty: document.getElementById('qStat3').value,
+    courses: document.getElementById('qStat4').value,
+  };
+  await ghWriteFile('_data/stats.json', JSON.stringify(data, null, 2), 'CMS: update homepage stats');
+}
+
+async function saveAnnouncement() {
+  const data = {
+    ticker: document.getElementById('annoText').value,
+    show_bise_alert: document.getElementById('biseAlertToggle').checked,
+    bise_alert_text: document.getElementById('biseAlertText').value,
+  };
+  await ghWriteFile('_data/announcements.json', JSON.stringify(data, null, 2), 'CMS: update announcements');
+}
+
+async function saveSEO() {
+  const data = {
+    title: document.getElementById('seoTitle')?.value || document.getElementById('qGA') && '' || '',
+    description: document.getElementById('seoDesc')?.value || '',
+    ga_id: document.getElementById('seoGA')?.value || document.getElementById('qGA')?.value || '',
+    adsense_id: document.getElementById('seoAdsense')?.value || document.getElementById('qAdsense')?.value || '',
+    sheets_url: document.getElementById('seoSheets')?.value || document.getElementById('qSheets')?.value || '',
+  };
+  // sync between pages
+  if(data.sheets_url){SHEETS_URL=data.sheets_url;localStorage.setItem('rw_sheets_url',data.sheets_url);}
+  await ghWriteFile('_data/seo.json', JSON.stringify(data, null, 2), 'CMS: update SEO & Google settings');
+}
+
+async function saveFAQ() {
+  const item = {
+    q: document.getElementById('faqQ').value,
+    a: document.getElementById('faqA').value,
+    cat: document.getElementById('faqCat').value
+  };
+  if (!item.q) { alert('Enter a question.'); return; }
+  if (editingFAQIdx >= 0) faqs[editingFAQIdx] = item; else faqs.push(item);
+  localStorage.setItem('rw_faqs', JSON.stringify(faqs));
+  const data = { faqs };
+  const ok = await ghWriteFile('_data/faq.json', JSON.stringify(data, null, 2), 'CMS: update FAQ');
+  if (ok) { renderFAQTable(); document.getElementById('faqEditor').style.display = 'none'; }
+}
+
+async function deleteFAQ(i) {
+  if (!confirm('Delete this FAQ?')) return;
+  faqs.splice(i, 1);
+  localStorage.setItem('rw_faqs', JSON.stringify(faqs));
+  await ghWriteFile('_data/faq.json', JSON.stringify({faqs}, null, 2), 'CMS: delete FAQ item');
+  renderFAQTable();
+}
+
+async function savePost() {
+  const title = document.getElementById('postTitle').value.trim();
+  if (!title) { alert('Enter a post title.'); return; }
+  const post = {
+    id: editingPostIdx >= 0 ? posts[editingPostIdx].id : Date.now(),
+    title,
+    cat: document.getElementById('postCat').value,
+    status: document.getElementById('postStatus').value,
+    description: document.getElementById('postMeta').value,
+    body: document.getElementById('postContent').innerHTML,
+    date: new Date().toLocaleDateString('en-PK'),
+    slug: title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')
+  };
+  if (editingPostIdx >= 0) posts[editingPostIdx] = post; else posts.unshift(post);
+  localStorage.setItem('rw_posts', JSON.stringify(posts));
+  document.getElementById('blogBadge').textContent = posts.length;
+  document.getElementById('statBlog').textContent = posts.length;
+  const data = { posts: posts.map(p=>({id:p.id,title:p.title,cat:p.cat,status:p.status,description:p.description,date:p.date,slug:p.slug})) };
+  const ok = await ghWriteFile('_data/blog-index.json', JSON.stringify(data, null, 2), 'CMS: ' + (editingPostIdx>=0?'update':'publish') + ' blog post: ' + title);
+  if (ok) { renderBlogPosts(); switchBlogTab('list', document.querySelector('#blogTabs .tab')); }
+}
+
+async function deletePost(i) {
+  if (!confirm('Delete this post?')) return;
+  posts.splice(i, 1);
+  localStorage.setItem('rw_posts', JSON.stringify(posts));
+  await ghWriteFile('_data/blog-index.json', JSON.stringify({posts}, null, 2), 'CMS: delete blog post');
+  renderBlogPosts();
+}
+
+async function savePartner() {
+  const item = {
+    name: document.getElementById('pName').value,
+    url: document.getElementById('pUrl').value,
+    description: document.getElementById('pDesc').value,
+    tag: document.getElementById('pTag').value,
+    sponsored: document.getElementById('pSponsored').value === 'true',
+    nofollow: document.getElementById('pNofollow').value === 'true',
+    icon: 'fas fa-link',
+    icon_color: '#0A2463',
+    bg_color: '#EEF2FF'
+  };
+  if (!item.name || !item.url) { alert('Enter name and URL.'); return; }
+  if (editingPartnerIdx >= 0) partners[editingPartnerIdx] = item; else partners.push(item);
+  localStorage.setItem('rw_partners', JSON.stringify(partners));
+  const ok = await ghWriteFile('_data/partners.json', JSON.stringify({links: partners}, null, 2), 'CMS: update partners & backlinks');
+  if (ok) { renderPartnersTable(); document.getElementById('partnerEditor').style.display = 'none'; }
+}
+
+async function deletePartner(i) {
+  if (!confirm('Delete this partner/link?')) return;
+  partners.splice(i, 1);
+  localStorage.setItem('rw_partners', JSON.stringify(partners));
+  await ghWriteFile('_data/partners.json', JSON.stringify({links: partners}, null, 2), 'CMS: delete partner link');
+  renderPartnersTable();
+}
+
+// ── RENDER FUNCTIONS ────────────────────────────────────────
+function renderBlogPosts() {
+  const c = document.getElementById('blogPosts');
+  if (!c) return;
+  if (!posts.length) { c.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted)">No posts yet. Click "New post" to write your first post.</div>'; return; }
+  c.innerHTML = posts.map((p,i) => `
+    <div class="blog-row">
+      <div class="blog-num">${i+1}</div>
+      <div style="flex:1"><div class="blog-title">${p.title}</div><div class="blog-meta">${p.cat} · ${p.date}</div></div>
+      <span class="badge ${p.status==='Published'?'badge-green':'badge-gold'}">${p.status}</span>
+      <button class="tbl-btn" style="margin-left:8px" onclick="editPost(${i})"><i class="fas fa-edit"></i></button>
+      <button class="tbl-btn danger" onclick="deletePost(${i})" style="margin-left:4px"><i class="fas fa-trash"></i></button>
+    </div>`).join('');
+  document.getElementById('blogBadge').textContent = posts.length;
+  document.getElementById('statBlog').textContent = posts.length;
+}
+
+function renderFAQTable() {
+  const t = document.getElementById('faqTable');
+  if (!t) return;
+  t.innerHTML = faqs.map((f,i) => `
+    <tr><td>${i+1}</td><td style="max-width:280px">${f.q}</td><td><span class="badge badge-blue">${f.cat}</span></td>
+    <td><button class="tbl-btn" onclick="editFAQ(${i})"><i class="fas fa-edit"></i></button> <button class="tbl-btn danger" onclick="deleteFAQ(${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+}
+
+function renderPartnersTable() {
+  const t = document.getElementById('partnersTable');
+  if (!t) return;
+  if (!partners.length) { t.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No partners yet. Click "Add partner" to add backlinks, sponsors, or resource links.</td></tr>'; return; }
+  t.innerHTML = partners.map((p,i) => `
+    <tr><td>${i+1}</td><td>${p.name}</td><td><a href="${p.url}" target="_blank" style="color:var(--navy);font-size:12px">${p.url.substring(0,35)}...</a></td>
+    <td><span class="badge badge-blue">${p.tag}</span></td>
+    <td>${p.sponsored?'<span class="badge badge-gold">Sponsored</span>':'No'}</td>
+    <td>${p.nofollow?'<span class="badge badge-red">nofollow</span>':'<span class="badge badge-green">dofollow</span>'}</td>
+    <td><button class="tbl-btn" onclick="editPartner(${i})"><i class="fas fa-edit"></i></button> <button class="tbl-btn danger" onclick="deletePartner(${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+}
+
+function renderEnrollments() {
+  const t = document.getElementById('enrollTable');
+  if (!t) return;
+  if (!enrollments.length) { t.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No enrollments yet. Add your Google Sheets URL in SEO settings to auto-receive enrollments.</td></tr>'; return; }
+  t.innerHTML = enrollments.map((e,i) => `
+    <tr><td>${i+1}</td><td>${e.name}</td><td><a href="https://wa.me/${e.phone}" target="_blank" style="color:var(--navy)">${e.phone}</a></td>
+    <td><span class="badge badge-blue">${e.course}</span></td><td>${e.city||''}</td><td>${e.date}</td>
+    <td><a href="https://wa.me/${e.phone}?text=Hello ${e.name}, your enrollment at Rightway Academy is confirmed!" target="_blank"><button class="tbl-btn"><i class="fab fa-whatsapp"></i></button></a></td></tr>`).join('');
+  document.getElementById('enrollBadge').textContent = enrollments.length;
+  document.getElementById('enrollCount').textContent = enrollments.length + ' enrollments';
+  document.getElementById('statEnroll').textContent = enrollments.length;
+}
+
+function renderMCQResults() {
+  const t = document.getElementById('mcqTable');
+  if (!t) return;
+  if (!mcqResults.length) { t.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No MCQ results yet.</td></tr>'; return; }
+  t.innerHTML = mcqResults.map((r,i) => `
+    <tr><td>${i+1}</td><td>${r.name}</td><td>${r.subject}</td><td>${r.class}</td>
+    <td>${r.score}/${r.total}</td><td><span class="badge ${r.percent>=80?'badge-green':r.percent>=50?'badge-gold':'badge-red'}">${r.percent}%</span></td><td>${r.date}</td></tr>`).join('');
+  document.getElementById('mcqTotal').textContent = mcqResults.length;
+  document.getElementById('statMCQ').textContent = mcqResults.length;
+  const avg = Math.round(mcqResults.reduce((s,r)=>s+r.percent,0)/mcqResults.length);
+  document.getElementById('mcqAvg').textContent = avg + '%';
+}
+
+function renderContacts() {
+  const t = document.getElementById('contactTable');
+  if (!t) return;
+  if (!contacts.length) { t.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No messages yet.</td></tr>'; return; }
+  t.innerHTML = contacts.map((c,i) => `
+    <tr><td>${i+1}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.subject||''}</td>
+    <td style="max-width:180px;font-size:12.5px">${(c.message||'').substring(0,60)}...</td><td>${c.date}</td>
+    <td><a href="https://wa.me/${c.phone}" target="_blank"><button class="tbl-btn"><i class="fab fa-whatsapp"></i></button></a></td></tr>`).join('');
+  document.getElementById('statMsg').textContent = contacts.length;
+}
+
+// ── FORM HELPERS ────────────────────────────────────────────
+function addFAQ() { editingFAQIdx=-1; document.getElementById('faqQ').value=''; document.getElementById('faqA').value=''; document.getElementById('faqEditor').style.display='block'; }
+function editFAQ(i) { editingFAQIdx=i; document.getElementById('faqQ').value=faqs[i].q; document.getElementById('faqA').value=faqs[i].a; document.getElementById('faqCat').value=faqs[i].cat; document.getElementById('faqEditor').style.display='block'; }
+function addPartner() { editingPartnerIdx=-1; document.getElementById('pName').value=''; document.getElementById('pUrl').value=''; document.getElementById('pDesc').value=''; document.getElementById('pTag').value=''; document.getElementById('partnerEditor').style.display='block'; }
+function editPartner(i) { editingPartnerIdx=i; const p=partners[i]; document.getElementById('pName').value=p.name; document.getElementById('pUrl').value=p.url; document.getElementById('pDesc').value=p.description||''; document.getElementById('pTag').value=p.tag||''; document.getElementById('pSponsored').value=p.sponsored?'true':'false'; document.getElementById('pNofollow').value=p.nofollow?'true':'false'; document.getElementById('partnerEditor').style.display='block'; }
+function openNewPost() { editingPostIdx=-1; switchBlogTab('new',document.getElementById('newPostTab')); }
+function editPost(i) { editingPostIdx=i; switchBlogTab('new',document.getElementById('newPostTab')); document.getElementById('postTitle').value=posts[i].title; document.getElementById('postCat').value=posts[i].cat; document.getElementById('postStatus').value=posts[i].status; document.getElementById('postMeta').value=posts[i].description||''; document.getElementById('postContent').innerHTML=posts[i].body||''; document.getElementById('editorTitle').textContent='Edit post'; }
+function switchBlogTab(tab,el) { document.querySelectorAll('#blogTabs .tab').forEach(t=>t.classList.remove('active')); if(el)el.classList.add('active'); document.getElementById('blogList').style.display=tab==='list'?'block':'none'; document.getElementById('blogEditor').style.display=tab==='new'?'block':'none'; if(tab==='new'&&editingPostIdx<0){document.getElementById('editorTitle').textContent='New blog post';document.getElementById('postTitle').value='';document.getElementById('postContent').innerHTML='';document.getElementById('postMeta').value='';} }
+function fmt(cmd){document.getElementById('postContent').focus();document.execCommand(cmd);}
+function fmtH(){document.getElementById('postContent').focus();document.execCommand('formatBlock',false,'H2');}
+function fmtList(){document.getElementById('postContent').focus();document.execCommand('insertUnorderedList');}
+function fmtLink(){const url=prompt('Enter URL:');if(url){document.getElementById('postContent').focus();document.execCommand('createLink',false,url);}}
+
+function exportCSV(type) {
+  const data = type==='enrollments' ? enrollments : contacts;
+  if (!data.length) { showToast('No data to export','info'); return; }
+  const rows = [Object.keys(data[0]), ...data.map(r=>Object.values(r))];
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download=type+'.csv'; a.click();
+}
+
+// ── ANNOUNCEMENT PREVIEW ────────────────────────────────────
+document.getElementById('annoText').addEventListener('input', () => {
+  document.getElementById('annoPreview').textContent = '📢 ' + document.getElementById('annoText').value.substring(0,100) + '...';
+});
+
+// ── DEPLOY ──────────────────────────────────────────────────
+function addDeployEntry(msg) {
+  const entry = { msg, time: new Date().toLocaleString('en-PK') };
+  deployHistory.unshift(entry);
+  if (deployHistory.length > 20) deployHistory = deployHistory.slice(0,20);
+  localStorage.setItem('rw_deploys', JSON.stringify(deployHistory));
+  const h = document.getElementById('deployHistory');
+  if (h) h.innerHTML = deployHistory.map(d=>`<div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center"><i class="fas fa-check-circle" style="color:var(--green)"></i><div><div style="font-size:13.5px">${d.msg}</div><div style="font-size:12px;color:var(--muted)">${d.time}</div></div></div>`).join('');
+}
+
+async function triggerDeploy() {
+  showToast('Force redeploy triggered — website updating in ~30 seconds','info');
+  // Write a timestamp file to force a deploy
+  await ghWriteFile('_data/last-deploy.json', JSON.stringify({deployed: new Date().toISOString()}), 'CMS: force redeploy');
+}
+
+// ── GITHUB SETUP ────────────────────────────────────────────
+function saveGitHubSetup() {
+  const repo = document.getElementById('setupRepo').value.trim();
+  const token = document.getElementById('setupToken').value.trim();
+  if (!repo || !token) { alert('Enter both repository and token.'); return; }
+  GH_REPO = repo; GH_TOKEN = token;
+  localStorage.setItem('rw_gh_repo', repo);
+  localStorage.setItem('rw_gh_token', token);
+  updateGHStatus();
+  showToast('GitHub connected! Now sign in.', 'success');
+}
+
+function saveGitHubFromSettings() {
+  const repo = document.getElementById('setRepo').value.trim();
+  const token = document.getElementById('setToken').value.trim();
+  if (!repo || !token) { alert('Enter both fields.'); return; }
+  GH_REPO = repo; GH_TOKEN = token;
+  localStorage.setItem('rw_gh_repo', repo);
+  localStorage.setItem('rw_gh_token', token);
+  updateGHStatus();
+  showToast('GitHub connection saved!', 'success');
+}
+
+function updateGHStatus() {
+  const connected = GH_REPO && GH_TOKEN;
+  const badge = document.getElementById('ghStatusBadge');
+  if (badge) {
+    badge.innerHTML = connected ? `<i class="fas fa-circle-dot" style="color:var(--green)"></i>GitHub: ${GH_REPO}` : '<i class="fas fa-circle-dot"></i>GitHub: Not set';
+    badge.style.background = connected ? '#ECFDF5' : '#FFFBEB';
+    badge.style.borderColor = connected ? '#86EFAC' : '#FDE68A';
+    badge.style.color = connected ? '#065F46' : '#854F0B';
+  }
+  const dash = document.getElementById('dashGHStatus');
+  if (dash) dash.innerHTML = connected
+    ? `<div class="gh-status connected"><div class="gh-dot"></div><div><strong>${GH_REPO}</strong><br><span style="font-size:12px;color:#166534">All saves write directly to GitHub → Netlify auto-deploys → website updates in ~30s</span></div></div>`
+    : `<div class="gh-status pending"><div class="gh-dot"></div><div><strong>Not connected</strong><br><span style="font-size:12px;color:#854F0B">Go to Settings → GitHub API connection to set up</span></div></div>`;
+  const dep = document.getElementById('deployGHStatus');
+  if (dep) dep.innerHTML = connected
+    ? `<div class="gh-status connected"><div class="gh-dot"></div><div><strong>Connected: ${GH_REPO}</strong><br><span style="font-size:12px;color:#166534">Every save auto-deploys via Netlify Git integration</span></div></div><div style="font-size:13px;color:var(--muted);margin-top:.5rem">Branch: main &nbsp;|&nbsp; Publish dir: . &nbsp;|&nbsp; Auto-deploy: ON</div>`
+    : `<div style="color:var(--muted);font-size:13px">Not connected. Go to Settings.</div>`;
+  if (connected && document.getElementById('setRepo')) {
+    document.getElementById('setRepo').value = GH_REPO;
+  }
+}
+
+// ── LOGIN ───────────────────────────────────────────────────
+function doLogin() {
+  const u = document.getElementById('loginUser').value;
+  const p = document.getElementById('loginPass').value;
+  if (u === 'admin' && p === ADMIN_PASS) {
+    document.getElementById('loginScreen').style.display = 'none';
+    initDashboard();
+    logActivity('Admin login');
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+function doLogout() { if(confirm('Log out?')) { document.getElementById('loginScreen').style.display='flex'; } }
+document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('loginUser').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+function changePassword() {
+  const np = document.getElementById('newPass').value;
+  const cp = document.getElementById('confirmPass').value;
+  if (!np) { alert('Enter a new password.'); return; }
+  if (np !== cp) { alert('Passwords do not match.'); return; }
+  if (np.length < 8) { alert('At least 8 characters.'); return; }
+  ADMIN_PASS = np;
+  localStorage.setItem('rw_admin_pass', np);
+  document.getElementById('newPass').value = '';
+  document.getElementById('confirmPass').value = '';
+  showToast('Password changed', 'success');
+  logActivity('Admin password changed');
+}
+
+// ── NAVIGATION ──────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const titles = {dashboard:'Dashboard',quickedit:'Quick edit',blog:'Blog posts',announcements:'Announcements',faq:'FAQ',partners:'Partners & Links',enrollments:'Enrollments',mcqresults:'MCQ results',contacts:'Messages',deploy:'Deploy site',seo:'SEO settings',settings:'Settings',security:'Security log'};
+  document.getElementById('topbarTitle').textContent = titles[id] || id;
+  if (id === 'deploy') { addDeployEntry; updateGHStatus(); const h=document.getElementById('deployHistory'); if(h&&deployHistory.length) h.innerHTML=deployHistory.map(d=>`<div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center"><i class="fas fa-check-circle" style="color:var(--green)"></i><div><div style="font-size:13.5px">${d.msg}</div><div style="font-size:12px;color:var(--muted)">${d.time}</div></div></div>`).join(''); }
+}
+
+// ── TOAST ───────────────────────────────────────────────────
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.className = 'toast ' + type;
+  t.style.display = 'flex';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.style.display='none', 4000);
+}
+
+// ── SAVING OVERLAY ──────────────────────────────────────────
+function showSaving(msg) { document.getElementById('savingMsg').textContent = msg||'Saving to GitHub...'; document.getElementById('savingOverlay').style.display='flex'; }
+function hideSaving() { document.getElementById('savingOverlay').style.display='none'; }
+
+// ── SECURITY LOG ────────────────────────────────────────────
+function logActivity(msg) {
+  const log = document.getElementById('securityLog');
+  if (!log) return;
+  const div = document.createElement('div'); div.className='log-item';
+  div.innerHTML = `<div class="log-icon success"><i class="fas fa-check"></i></div><div><div style="font-size:13.5px;font-weight:500">${msg}</div><div class="log-time">${new Date().toLocaleString('en-PK')}</div></div>`;
+  log.insertBefore(div, log.firstChild);
+}
+
+// ── RECEIVE DATA FROM WEBSITE (via postMessage) ──────────────
+window.addEventListener('message', e => {
+  try {
+    const d = typeof e.data==='string' ? JSON.parse(e.data) : e.data;
+    if (d.type==='enrollment') { enrollments.push(d); localStorage.setItem('rw_enrollments',JSON.stringify(enrollments)); renderEnrollments(); updateStats(); showToast('New enrollment: '+d.name,'success'); }
+    if (d.type==='mcq_result') { mcqResults.push(d); localStorage.setItem('rw_mcq',JSON.stringify(mcqResults)); renderMCQResults(); }
+    if (d.type==='contact') { contacts.push(d); localStorage.setItem('rw_contacts',JSON.stringify(contacts)); renderContacts(); showToast('New message from '+d.name,'info'); }
+  } catch(err) {}
+});
+
+// ── INIT ────────────────────────────────────────────────────
+function initDashboard() {
+  updateGHStatus();
+  renderBlogPosts(); renderFAQTable(); renderPartnersTable();
+  renderEnrollments(); renderMCQResults(); renderContacts();
+  updateStats();
+  document.getElementById('annoPreview').textContent = '📢 ' + document.getElementById('annoText').value.substring(0,100) + '...';
+  // Load existing data from GitHub if connected
+  if (GH_REPO && GH_TOKEN) loadFromGitHub();
+}
+
+function updateStats() {
+  document.getElementById('statEnroll').textContent = enrollments.length;
+  document.getElementById('statMCQ').textContent = mcqResults.length;
+  document.getElementById('statMsg').textContent = contacts.length;
+  document.getElementById('statBlog').textContent = posts.length;
+  document.getElementById('enrollBadge').textContent = enrollments.length;
+  document.getElementById('blogBadge').textContent = posts.length;
+}
+
+async function loadFromGitHub() {
+  // Load existing _data files from GitHub to populate the form fields
+  const [contact, stats, ann, seo] = await Promise.all([
+    ghReadFile('_data/contact.json'),
+    ghReadFile('_data/stats.json'),
+    ghReadFile('_data/announcements.json'),
+    ghReadFile('_data/seo.json'),
+  ]);
+  if (contact) {
+    document.getElementById('qPhone').value = contact.whatsapp||'';
+    document.getElementById('qEmail').value = contact.email1||'';
+    document.getElementById('qEmail2').value = contact.email2||'';
+    document.getElementById('qPTB').value = contact.ptb_url||'';
+    document.getElementById('qBISE').value = contact.bise_url||'';
+    document.getElementById('qNoon').value = contact.noon_url||'';
+    document.getElementById('qArmy').value = contact.army_url||'';
+    document.getElementById('qQuran').value = contact.quran_url||'';
+  }
+  if (stats) {
+    document.getElementById('qStat1').value = stats.students||'5,000+';
+    document.getElementById('qStat2').value = stats.pass_rate||'95%';
+    document.getElementById('qStat3').value = stats.faculty||'12+';
+    document.getElementById('qStat4').value = stats.courses||'10+';
+  }
+  if (ann) {
+    document.getElementById('annoText').value = ann.ticker||'';
+    document.getElementById('biseAlertToggle').checked = ann.show_bise_alert!==false;
+    document.getElementById('biseAlertText').value = ann.bise_alert_text||'';
+  }
+  if (seo) {
+    if(document.getElementById('seoTitle')) document.getElementById('seoTitle').value = seo.title||'';
+    if(document.getElementById('seoDesc')) document.getElementById('seoDesc').value = seo.description||'';
+    if(document.getElementById('seoGA')) document.getElementById('seoGA').value = seo.ga_id||'';
+    if(document.getElementById('seoAdsense')) document.getElementById('seoAdsense').value = seo.adsense_id||'';
+    if(document.getElementById('seoSheets')) document.getElementById('seoSheets').value = seo.sheets_url||'';
+    if(seo.sheets_url) { SHEETS_URL=seo.sheets_url; localStorage.setItem('rw_sheets_url',seo.sheets_url); }
+  }
+  showToast('Loaded current data from GitHub ✅','success');
+}
+
+// Pre-fill GitHub fields if already saved
+if (GH_REPO) { document.getElementById('setupRepo').value = GH_REPO; }
+updateGHStatus();
+</script>
+</body>
+</html>
